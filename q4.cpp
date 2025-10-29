@@ -1,6 +1,14 @@
 #include <iostream>
 using namespace std;
 
+// Josephus function: finds survivor position when eliminating every K-th person
+int josephus(int n, int k) {
+    if (n == 1)
+        return 0;
+    else
+        return (josephus(n - 1, k) + k) % n;
+}
+
 int main() {
     int N, K;
     cout << "Enter the number of people (N): ";
@@ -8,50 +16,31 @@ int main() {
     cout << "Enter the step (K): ";
     cin >> K;
 
-    // Create an array to mark eliminated people
-    int people[1000];  // supports up to 1000 people (can adjust)
-    int i = 0;
-
-    // Initialize all people as alive (1)
-    while (i < N) {
-        people[i] = 1;
-        i++;
+    // Find the last survivor (when only 1 remains)
+    int lastSurvivor = josephus(N, K) + 1; 
+    
+    // Survivor when reduced to 2 people
+    int pos1 = josephus(N, K);
+    
+    int pos2 = josephus(N - 1, K);  
+    
+    // Adjust for the actual positions
+    int survivor1 = (josephus(N, K) + 1);
+    int survivor2 = (josephus(N - 1, K) + 1);
+    
+    // Ensure survivor2 accounts for wrap-around
+    if (survivor2 >= survivor1) {
+        survivor2++;
+    }
+    
+    if (survivor1 > survivor2) {
+        int temp = survivor1;
+        survivor1 = survivor2;
+        survivor2 = temp;
     }
 
-    int alive = N;      // total remaining people
-    int index = 0;      // current position
-    int count = 0;      // counter for step
-
-    // Keep eliminating until only 2 remain
-    while (alive > 2) {
-        if (people[index] == 1) { // if person is still alive
-            count++;
-            if (count == K) {     // eliminate this person
-                people[index] = 0;
-                alive--;
-                count = 0;        // reset counter
-            }
-        }
-        index++;                  // move to next person
-        if (index == N) index = 0; // wrap around the circle
-    }
-
-    // Display the two survivors (1-based positions)
     cout << "The two last companions are at positions: ";
-
-    int j = 0;
-    int first = -1, second = -1;
-    while (j < N) {
-        if (people[j] == 1) {
-            if (first == -1)
-                first = j + 1;
-            else
-                second = j + 1;
-        }
-        j++;
-    }
-
-    cout << first << " and " << second << endl;
+    cout << survivor1 << " and " << survivor2 << endl;
 
     return 0;
 }
