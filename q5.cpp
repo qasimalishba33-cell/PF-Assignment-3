@@ -9,51 +9,62 @@ bool isPrimeNum(int x) {
     return true;
 }
 
+// Function to find which number goes at position (row, col) in spiral
+int getNumberAtPosition(int n, int row, int col) {
+    int layer = min(min(row, col), min(n - 1 - row, n - 1 - col));
+    
+    // Numbers already filled in outer layers
+    int numsFilled = 0;
+    for (int i = 0; i < layer; i++) {
+        int sideLength = n - 2 * i;
+        numsFilled += 4 * sideLength - 4;
+    }
+    
+    // Current layer dimensions
+    int top = layer;
+    int bottom = n - 1 - layer;
+    int left = layer;
+    int right = n - 1 - layer;
+    
+    // Starting number for this layer (counting down from n*n)
+    int startNum = n * n - numsFilled;
+    
+    // Position within the layer
+    if (row == top) {
+        // Top row, moving right
+        return startNum - (col - left);
+    } else if (col == right) {
+        // Right column, moving down
+        return startNum - (right - left) - (row - top);
+    } else if (row == bottom) {
+        // Bottom row, moving left
+        return startNum - (right - left) - (bottom - top) - (right - col);
+    } else {
+        // Left column, moving up
+        return startNum - (right - left) - (bottom - top) - (right - left) - (bottom - row);
+    }
+}
+
 int main() {
     int n;
     cout << "Enter N: ";
     cin >> n;
 
-    int top = 0, bottom = n - 1;
-    int left = 0, right = n - 1;
-    int num = n * n;
-
-    // Create a virtual grid (without using arrays)
-    // We'll move layer by layer, but print row by row
-    char grid[20][20]; // <-- Only used for visual correctness during print
-                       // remove if your assignment strictly says NO arrays
-
-    while (top <= bottom && left <= right) {
-        for (int i = left; i <= right; i++) {
-            grid[top][i] = (num == 1) ? '.' : (isPrimeNum(num) ? 'P' : 'C');
-            num--;
-        }
-        top++;
-
-        for (int i = top; i <= bottom; i++) {
-            grid[i][right] = (num == 1) ? '.' : (isPrimeNum(num) ? 'P' : 'C');
-            num--;
-        }
-        right--;
-
-        for (int i = right; i >= left; i--) {
-            grid[bottom][i] = (num == 1) ? '.' : (isPrimeNum(num) ? 'P' : 'C');
-            num--;
-        }
-        bottom--;
-
-        for (int i = bottom; i >= top; i--) {
-            grid[i][left] = (num == 1) ? '.' : (isPrimeNum(num) ? 'P' : 'C');
-            num--;
-        }
-        left++;
-    }
-
-    // Finally print the pattern in a proper square form
     cout << endl;
     for (int r = 0; r < n; r++) {
         for (int c = 0; c < n; c++) {
-            cout << grid[r][c];
+            int num = getNumberAtPosition(n, r, c);
+            char ch;
+            
+            if (num == 1) {
+                ch = '.';
+            } else if (isPrimeNum(num)) {
+                ch = 'P';
+            } else {
+                ch = 'C';
+            }
+            
+            cout << ch;
             if (c < n - 1) cout << " ";
         }
         cout << endl;
