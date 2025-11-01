@@ -2,8 +2,7 @@
 using namespace std;
 
 int main() {
-    // Simple pseudo-random generator using arithmetic (no rand or time)
-    // We'll base it on user input + loop counter to make it seem random
+    
     int seed;
     cout << "🦁 The Sphinx's Challenge 🦁" << endl;
     cout << "Enter any number to begin your fate: ";

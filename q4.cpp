@@ -35,7 +35,7 @@ int main() {
     
     if (survivor1 > survivor2) {
         int temp = survivor1;
-        survivor1 = survivor2;
+        survivor1 = survivor2;11
         survivor2 = temp;
     }
 
